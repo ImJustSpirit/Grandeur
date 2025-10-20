@@ -204,6 +204,9 @@ public class SkillController : MonoBehaviour
         // Add Components
         obj.AddComponent<Rigidbody>();
         obj.AddComponent<SkillActive>();
+        obj.GetComponent<SkillActive>().skill = skill;
+        obj.GetComponent<SkillActive>().targetLayer  = skill.targetLayers;
+        obj.GetComponent<SkillActive>().damageMethod = skill.damageMethod;
         if (skill.customScript != null) { obj.AddComponent(skill.customScript.GetType()); }
         
         return obj;
@@ -250,11 +253,9 @@ public class SkillController : MonoBehaviour
             ranged.GetComponent<Rigidbody>().freezeRotation = true;
             
             // Skill Script
-            ranged.GetComponent<SkillActive>().skill = skill;
             ranged.GetComponent<SkillActive>().damage = skill.ranDamage;
             ranged.GetComponent<SkillActive>().range = skill.ranRange;
             ranged.GetComponent<SkillActive>().hitCount = skill.ranPiercingCount;
-            ranged.GetComponent<SkillActive>().targetLayer  = skill.targetLayers;
 
             if (skill.ranAttackStyle == SkillSO.ranAttackTypes.Line) {
                 // TODO: Ranged Effects
@@ -306,7 +307,6 @@ public class SkillController : MonoBehaviour
         aoe.transform.position = transform.position - new Vector3(0, 1f, 0);
         
         // Skill Script
-        aoe.GetComponent<SkillActive>().skill = skill;
         aoe.GetComponent<SkillActive>().damage = skill.aoeDamage;
         aoe.GetComponent<SkillActive>().duration = skill.aoeDuration;
     }

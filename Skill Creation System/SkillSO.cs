@@ -10,6 +10,13 @@ public class SkillSO : ScriptableObject
     public enum aoeSpawnTypes {Instant, OnDeath, OnImpact, OnHit};
     public enum objectTypes {None, Sphere, Capsule, Custom};
     public enum colliderTypes {Capsule, Box, Sphere, Mesh};
+    public enum methods
+    {
+        destroy,    // Will destroy the target object
+        deactivate, // Will deactivate the target object
+        custom,     // Will call a custom method (user needs to implement in SkillActive.cs under DoDamage())
+        none        // Will do nothing to the target object
+    };
     
     public bool canUse = true;
     
@@ -20,6 +27,7 @@ public class SkillSO : ScriptableObject
     public float castTime;
     public int cost;
     public bool heldSightline;
+    public methods damageMethod;
     
     [Header("Player")]
     public float modHealth;
@@ -103,6 +111,7 @@ public class SkillSOEditor : Editor
         script.castTime = EditorGUILayout.FloatField("[UNUSED] Cast Time", script.castTime);
         script.cost = EditorGUILayout.IntField("Cost", script.cost);
         script.heldSightline = GUILayout.Toggle(script.heldSightline, "Held Sightline");
+        script.damageMethod = (SkillSO.methods)EditorGUILayout.EnumPopup("Damage Method", script.damageMethod);
         
         GUILayout.Space(10);
         GUILayout.Label("Ability Settings", EditorStyles.boldLabel);

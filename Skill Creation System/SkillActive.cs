@@ -19,6 +19,7 @@ public class SkillActive : MonoBehaviour
     public int hitCount = -1;   // ranPiercingCount, proBounce | Anything above 0 has limited hits, -1 is infinite
     public float duration = -1; // aoeDuration                 | Anything above 0 is timed, -1 is infinite
     public LayerMask targetLayer;
+    public SkillSO.methods damageMethod;
     private AudioSource audioData;
     private List<Collision> dotCooldown = new List<Collision>();
     private Vector3 startPosition;
@@ -94,14 +95,14 @@ public class SkillActive : MonoBehaviour
 
     void DoDamage(GameObject target)
     {
-        switch (SkillManager.damageMethod) {
-            case SkillManager.methods.destroy:
+        switch (damageMethod) {
+            case SkillSO.methods.destroy:
                 Destroy(target);
                 break;
-            case SkillManager.methods.deactivate:
+            case SkillSO.methods.deactivate:
                 target.gameObject.SetActive(false);
                 break;
-            case SkillManager.methods.custom: // User defined damage method
+            case SkillSO.methods.custom: // User defined damage method
                 break;
         }
     }
