@@ -160,9 +160,7 @@ public class SkillSOEditor : Editor
             script.aoeDamage = EditorGUILayout.FloatField("[UNUSED] Damage", script.aoeDamage);
             script.aoeDuration = EditorGUILayout.FloatField("[UNUSED] Duration", script.aoeDuration);
             script.aoeSpawn = (SkillSO.aoeSpawnTypes)EditorGUILayout.EnumPopup("[UNUSED] Spawn Type", script.aoeSpawn);
-            if ((script.aoeSpawn == SkillSO.aoeSpawnTypes.OnDeath || script.aoeSpawn == SkillSO.aoeSpawnTypes.OnImpact ||
-                script.aoeSpawn == SkillSO.aoeSpawnTypes.OnHit) && !script.isMelee && !script.isRanged &&
-                !script.isProjectile) {
+            if ((script.aoeSpawn == SkillSO.aoeSpawnTypes.OnDeath || script.aoeSpawn == SkillSO.aoeSpawnTypes.OnImpact || script.aoeSpawn == SkillSO.aoeSpawnTypes.OnHit) && !script.isMelee && !script.isRanged && !script.isProjectile) {
                 EditorGUILayout.HelpBox("The selected Spawn Type requires either Melee, Ranged or Projectile to be enable in order for it to be triggered.", MessageType.Error);
             }
             EditorGUILayout.EndVertical();
@@ -239,8 +237,7 @@ public class SkillSOEditor : Editor
         script.targetLayers = EditorGUILayout.MaskField("Target Layers", script.targetLayers, layerOptions);
         script.excludeLayers = EditorGUILayout.MaskField("Exclude Layers", script.excludeLayers, layerOptions);
         
-        if (EditorGUI.EndChangeCheck())
-        {
+        if (EditorGUI.EndChangeCheck()) {
             EditorUtility.SetDirty(script);
         }
     }

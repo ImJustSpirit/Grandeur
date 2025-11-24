@@ -144,18 +144,17 @@ public class SkillController : MonoBehaviour
         if (skill.customOrigin != null) { origin = skill.customOrigin; }
         else { origin = skillOrigin; }
         
-        PlayerEffects(skill);
         if (skill.isMelee) { MeleeEffects(skill); }
         if (skill.isRanged) { RangedEffects(skill); }
         if (skill.isProjectile) { ProjectileEffects(skill); }
         if (skill.isAOE) { AOEEffects(skill); }
     }
-    
+
     GameObject ObjectSetup(SkillSO skill)
     {
         // TODO: Object Setup
         //     Fix ranged being wrong direction when firing from extreme angles
-        
+
         GameObject obj = null;
         switch (skill.visObjectType) {
             case SkillSO.objectTypes.Capsule:
@@ -198,39 +197,33 @@ public class SkillController : MonoBehaviour
                 }
                 break;
         }
+
         obj.name = skill.name;
         obj.layer = 11;
-            
+
         // Visuals
         refRenderer = obj.GetComponent<Renderer>();
         refRenderer.material = skill.visMaterial;
-        if (skill.visColor.a != 0) {refRenderer.material.color = skill.visColor;}
-        
+        if (skill.visColor.a != 0) {
+            refRenderer.material.color = skill.visColor;
+        }
+
         // Collider
         refCollider = obj.GetComponent<Collider>();
         refCollider.excludeLayers = skill.excludeLayers;
-        
+
         // Add Components
         refRigidbody = obj.AddComponent<Rigidbody>();
         refSkillActive = obj.AddComponent<SkillActive>();
         refSkillActive.targetLayer = skill.targetLayers;
         refSkillActive.damageMethod = skill.damageMethod;
-        if (skill.customScript != null) { refCustomScript = obj.AddComponent(skill.customScript.GetType()); }
-        
+        if (skill.customScript != null) {
+            refCustomScript = obj.AddComponent(skill.customScript.GetType());
+        }
+
         return obj;
     }
-    
-    void PlayerEffects(SkillSO skill)
-    {
-        Debug.Log("Player Effects");
-        
-        // BUG: BROKEN UNTIL STATS ADDED
-        /*playerController.statHealth.AddModifier(new StatModifier(skill.modHealth, StatModifierType.PercentAdd, skill, skill.modDuration));
-        playerController.statSpeed.AddModifier(new StatModifier(skill.modSpeed, StatModifierType.PercentAdd, skill, skill.modDuration));
-        playerController.statdamage.AddModifier(new StatModifier(skill.modDamage, StatModifierType.PercentAdd, skill, skill.modDuration));
-        playerController.statKnockback.AddModifier(new StatModifier(skill.modKnockback, StatModifierType.PercentAdd, skill, skill.modDuration));*/
-    }
-    
+
     void MeleeEffects(SkillSO skill)
     {
         // TODO: Melee Effects
@@ -238,7 +231,7 @@ public class SkillController : MonoBehaviour
         //     Knockback enemies
         //     Damage enemies
         
-        Debug.Log("Melee Effects");
+        //Debug.Log("Melee Effects");
     }
     
     void RangedEffects(SkillSO skill)
@@ -247,7 +240,7 @@ public class SkillController : MonoBehaviour
         //     Ran Instant
         //     Line
         
-        Debug.Log("Ranged Effects");
+        //Debug.Log("Ranged Effects");
         if (!skill.ranInstant) {
             //Fires ray
             ray = new Ray(origin.transform.position, origin.transform.forward);
@@ -272,7 +265,6 @@ public class SkillController : MonoBehaviour
                 refRigidbody.linearVelocity = (hitInfo.point - ranged.transform.position).normalized * skill.ranSpeed;
             }
             else {
-                Debug.Log(skillOrigin.transform.rotation.eulerAngles);
                 ranged.transform.rotation = Quaternion.Euler(skillOrigin.transform.rotation.eulerAngles + new Vector3(90, 0, 0));
                 refRigidbody.linearVelocity = origin.transform.forward * skill.ranSpeed;
             }
@@ -290,7 +282,7 @@ public class SkillController : MonoBehaviour
         // TODO: Projectile Effects
         //     Make the projectile launch upwards with more oomph
         
-        Debug.Log("Projectile Effects");
+        //Debug.Log("Projectile Effects");
         GameObject projectile = ObjectSetup(skill);
         
         // Skill Script
@@ -316,7 +308,7 @@ public class SkillController : MonoBehaviour
         //     Spawn on impact
         //     Keeps projectile alive if enabled
         
-        Debug.Log("AOE Effects");
+        //Debug.Log("AOE Effects");
         GameObject aoe = ObjectSetup(skill);
         aoe.transform.localScale = new Vector3(skill.visRadius, skill.visHeight, skill.visRadius);
         

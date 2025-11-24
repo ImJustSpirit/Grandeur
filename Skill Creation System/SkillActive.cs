@@ -26,14 +26,8 @@ public class SkillActive : MonoBehaviour
     
     private IEnumerator dotTimer(Collision collision)
     {
-        Debug.Log($"Hit: {collision.collider.gameObject.name}");
-        // BUG: BROKEN UNTIL STATS ADDED
-        /*if (collision.gameObject.TryGetComponent(out Health health))
-        {
-            health?.ApplyDamage(new DamageInfo(damage, collision.transform.position, gameObject));
-            audioData.clip = skill.sndHit;
-            audioData.Play();
-        }*/
+        //Debug.Log($"Hit: {collision.collider.gameObject.name}");
+        DoDamage(collision.gameObject);
         yield return new WaitForSeconds(1);
         dotCooldown.Remove(collision);
     }
@@ -59,11 +53,9 @@ public class SkillActive : MonoBehaviour
     
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log($"Hit: {collision.collider.gameObject.name}");
+        //Debug.Log($"Hit: {collision.collider.gameObject.name}");
         if ((targetLayer & (1 << collision.gameObject.layer)) != 0) // Hit target
         {
-            audioData.clip = skill.sndHit;
-            audioData.Play();
             DoDamage(collision.gameObject);
             if (hitCount > 0) { hitCount--; } // Reduce hit count
             else if (hitCount == 0) { Destroy(gameObject); } // Destroy skill if out of hits
@@ -87,7 +79,7 @@ public class SkillActive : MonoBehaviour
             }
             foreach (var x in dotCooldown)
             {
-                Debug.Log($"Found: {x.gameObject.name}");
+                //Debug.Log($"Found: {x.gameObject.name}");
                 DoDamage(collision.gameObject);
             }
         }
@@ -95,6 +87,8 @@ public class SkillActive : MonoBehaviour
 
     void DoDamage(GameObject target)
     {
+        audioData.clip = skill.sndHit;
+        audioData.Play();
         switch (damageMethod) {
             case SkillSO.methods.destroy:
                 Destroy(target);
