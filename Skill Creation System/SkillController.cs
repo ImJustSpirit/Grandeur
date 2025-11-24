@@ -2,6 +2,7 @@
 //     Make the material also get the opacity
 
 using System.Collections;
+using UnityEditor;
 using UnityEngine;
 
 public class SkillController : MonoBehaviour
@@ -11,6 +12,7 @@ public class SkillController : MonoBehaviour
     
     // Private Variables
     private GameObject origin;
+    private bool canUse = true;
     
     // Sightline Variables
     private GameObject sightlineRAN;
@@ -22,11 +24,24 @@ public class SkillController : MonoBehaviour
     private RaycastHit hitInfo;
     private GameObject hitObject = null;
     
+    // Components
+    private CapsuleCollider refCapsuleCollider;
+    private BoxCollider refBoxCollider;
+    private SphereCollider refSphereCollider;
+    private MeshCollider refMeshCollider;
+    private Rigidbody refRigidbody;
+    private MeshRenderer refMeshRenderer;
+    private MeshFilter refMeshFilter;
+    private SkillActive refSkillActive;
+    private Component refCustomScript;
+    private Renderer refRenderer;
+    private Collider refCollider;
+    
     private IEnumerator Cooldown(SkillSO skill)
     {
         Debug.Log("Cooldown started");
         yield return new WaitForSeconds(skill.cooldown);
-        skill.canUse = true;
+        canUse = true;
         Debug.Log("Cooldown finished");
     }
     
@@ -42,7 +57,7 @@ public class SkillController : MonoBehaviour
     public void Sightline(SkillSO skill)
     {
         // TODO: Sightline
-        //     Make sightline only show when skill.canUse is true
+        //     Make sightline only show when canUse is true
         //     Change ray from camera to player
         
         ray = new Ray(origin.transform.position, origin.transform.forward);
@@ -122,8 +137,8 @@ public class SkillController : MonoBehaviour
         Destroy(sightlineAOE);
         hitObject = null;
         
-        if (!skill.canUse) { return; }
-        skill.canUse = false;
+        if (!canUse) { return; }
+        canUse = false;
         StartCoroutine(Cooldown(skill));
         
         if (skill.customOrigin != null) { origin = skill.customOrigin; }
@@ -147,46 +162,38 @@ public class SkillController : MonoBehaviour
                 obj = GameObject.CreatePrimitive(PrimitiveType.Capsule);
                 obj.transform.localScale = new Vector3(skill.visRadius, skill.visHeight, skill.visRadius);
                 obj.transform.position = origin.transform.position;
-                if (hitInfo.transform != null) {
-                    obj.transform.LookAt(hitInfo.point);
-                    obj.transform.rotation = Quaternion.Euler(obj.transform.rotation.eulerAngles + new Vector3(90, 0, 0));
-                    obj.GetComponent<Rigidbody>().linearVelocity = (hitInfo.point - obj.transform.position).normalized * skill.ranSpeed;
-                }
-                else {
-                    Debug.Log(skillOrigin.transform.rotation.eulerAngles);
-                    obj.transform.rotation = Quaternion.Euler(skillOrigin.transform.rotation.eulerAngles + new Vector3(90, 0, 0));
-                    obj.GetComponent<Rigidbody>().linearVelocity = origin.transform.forward * skill.ranSpeed;
-                }
                 break;
             case SkillSO.objectTypes.Sphere:
                 obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 obj.transform.localScale = Vector3.one * skill.visRadius;
+                obj.transform.position = origin.transform.position;
                 break;
             case SkillSO.objectTypes.Custom:
                 obj = new GameObject();
-                obj.AddComponent<MeshRenderer>();
-                obj.AddComponent<MeshFilter>().mesh = skill.visMesh;
+                refMeshRenderer = obj.AddComponent<MeshRenderer>();
+                refMeshFilter = obj.AddComponent<MeshFilter>();
+                refMeshFilter.mesh = skill.visMesh;
                 obj.transform.localScale = skill.visScale;
                 switch (skill.visCollider) {
                     case SkillSO.colliderTypes.Capsule:
-                        obj.AddComponent<CapsuleCollider>();
-                        obj.GetComponent<CapsuleCollider>().radius = skill.visColliderRadius;
-                        obj.GetComponent<CapsuleCollider>().height = skill.visColliderHeight;
-                        obj.GetComponent<CapsuleCollider>().center = skill.visColliderCenter;
+                        refCapsuleCollider = obj.AddComponent<CapsuleCollider>();
+                        refCapsuleCollider.radius = skill.visColliderRadius;
+                        refCapsuleCollider.height = skill.visColliderHeight;
+                        refCapsuleCollider.center = skill.visColliderCenter;
                         break;
                     case SkillSO.colliderTypes.Box:
-                        obj.AddComponent<BoxCollider>();
-                        obj.GetComponent<BoxCollider>().size = skill.visColliderSize;
-                        obj.GetComponent<BoxCollider>().center = skill.visColliderCenter;
+                        refBoxCollider = obj.AddComponent<BoxCollider>();
+                        refBoxCollider.size = skill.visColliderSize;
+                        refBoxCollider.center = skill.visColliderCenter;
                         break;
                     case SkillSO.colliderTypes.Sphere:
-                        obj.AddComponent<SphereCollider>();
-                        obj.GetComponent<SphereCollider>().radius = skill.visColliderRadius;
-                        obj.GetComponent<SphereCollider>().center = skill.visColliderCenter;
+                        refSphereCollider = obj.AddComponent<SphereCollider>();
+                        refSphereCollider.radius = skill.visColliderRadius;
+                        refSphereCollider.center = skill.visColliderCenter;
                         break;
                     case SkillSO.colliderTypes.Mesh:
-                        obj.AddComponent<MeshCollider>();
-                        obj.GetComponent<MeshCollider>().sharedMesh = skill.visMesh;
+                        refMeshCollider = obj.AddComponent<MeshCollider>();
+                        refMeshCollider.sharedMesh = skill.visMesh;
                         break;
                 }
                 break;
@@ -195,19 +202,20 @@ public class SkillController : MonoBehaviour
         obj.layer = 11;
             
         // Visuals
-        obj.GetComponent<Renderer>().material = skill.visMaterial;
-        if (skill.visColor.a != 0) {obj.GetComponent<Renderer>().material.color = skill.visColor;}
-            
+        refRenderer = obj.GetComponent<Renderer>();
+        refRenderer.material = skill.visMaterial;
+        if (skill.visColor.a != 0) {refRenderer.material.color = skill.visColor;}
+        
         // Collider
-        obj.GetComponent<Collider>().excludeLayers = skill.excludeLayers;
+        refCollider = obj.GetComponent<Collider>();
+        refCollider.excludeLayers = skill.excludeLayers;
         
         // Add Components
-        obj.AddComponent<Rigidbody>();
-        obj.AddComponent<SkillActive>();
-        obj.GetComponent<SkillActive>().skill = skill;
-        obj.GetComponent<SkillActive>().targetLayer  = skill.targetLayers;
-        obj.GetComponent<SkillActive>().damageMethod = skill.damageMethod;
-        if (skill.customScript != null) { obj.AddComponent(skill.customScript.GetType()); }
+        refRigidbody = obj.AddComponent<Rigidbody>();
+        refSkillActive = obj.AddComponent<SkillActive>();
+        refSkillActive.targetLayer = skill.targetLayers;
+        refSkillActive.damageMethod = skill.damageMethod;
+        if (skill.customScript != null) { refCustomScript = obj.AddComponent(skill.customScript.GetType()); }
         
         return obj;
     }
@@ -249,13 +257,25 @@ public class SkillController : MonoBehaviour
             GameObject ranged = ObjectSetup(skill);
             
             // Rigidbody
-            ranged.GetComponent<Rigidbody>().useGravity = false;
-            ranged.GetComponent<Rigidbody>().freezeRotation = true;
+            refRigidbody.useGravity = false;
+            refRigidbody.freezeRotation = true;
             
             // Skill Script
-            ranged.GetComponent<SkillActive>().damage = skill.ranDamage;
-            ranged.GetComponent<SkillActive>().range = skill.ranRange;
-            ranged.GetComponent<SkillActive>().hitCount = skill.ranPiercingCount;
+            refSkillActive.skill = skill;
+            refSkillActive.damage = skill.ranDamage;
+            refSkillActive.range = skill.ranRange;
+            refSkillActive.hitCount = skill.ranPiercingCount;
+            
+            if (hitInfo.transform != null) {
+                ranged.transform.LookAt(hitInfo.point);
+                ranged.transform.rotation = Quaternion.Euler(ranged.transform.rotation.eulerAngles + new Vector3(90, 0, 0));
+                refRigidbody.linearVelocity = (hitInfo.point - ranged.transform.position).normalized * skill.ranSpeed;
+            }
+            else {
+                Debug.Log(skillOrigin.transform.rotation.eulerAngles);
+                ranged.transform.rotation = Quaternion.Euler(skillOrigin.transform.rotation.eulerAngles + new Vector3(90, 0, 0));
+                refRigidbody.linearVelocity = origin.transform.forward * skill.ranSpeed;
+            }
 
             if (skill.ranAttackStyle == SkillSO.ranAttackTypes.Line) {
                 // TODO: Ranged Effects
@@ -274,8 +294,8 @@ public class SkillController : MonoBehaviour
         GameObject projectile = ObjectSetup(skill);
         
         // Skill Script
-        projectile.GetComponent<SkillActive>().damage = skill.proDamage;
-        projectile.GetComponent<SkillActive>().hitCount = skill.proBounce;
+        refSkillActive.damage = skill.proDamage;
+        refSkillActive.hitCount = skill.proBounce;
         
         //Fires a ray from the camera
         ray = Camera.main.ViewportPointToRay(new Vector3 (0.5f, 0.5f, 0));
@@ -285,7 +305,7 @@ public class SkillController : MonoBehaviour
         projectile.transform.position = transform.position;
         projectile.transform.LookAt(hitInfo.point);
         projectile.transform.rotation = Quaternion.Euler(projectile.transform.rotation.eulerAngles);
-        projectile.GetComponent<Rigidbody>().linearVelocity = (hitInfo.point - projectile.transform.position).normalized * skill.ranSpeed;
+        refRigidbody.linearVelocity = (hitInfo.point - projectile.transform.position).normalized * skill.ranSpeed;
     }
     
     void AOEEffects(SkillSO skill)
@@ -301,13 +321,14 @@ public class SkillController : MonoBehaviour
         aoe.transform.localScale = new Vector3(skill.visRadius, skill.visHeight, skill.visRadius);
         
         // Rigidbody
-        aoe.GetComponent<Rigidbody>().useGravity = false;
-        aoe.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+        refRigidbody.useGravity = false;
+        refRigidbody.constraints = RigidbodyConstraints.FreezeAll;
 
         aoe.transform.position = transform.position - new Vector3(0, 1f, 0);
         
         // Skill Script
-        aoe.GetComponent<SkillActive>().damage = skill.aoeDamage;
-        aoe.GetComponent<SkillActive>().duration = skill.aoeDuration;
+        refSkillActive.skill = skill;
+        refSkillActive.damage = skill.aoeDamage;
+        refSkillActive.duration = skill.aoeDuration;
     }
 }

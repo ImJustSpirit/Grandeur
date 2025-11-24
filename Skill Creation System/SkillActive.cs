@@ -60,13 +60,13 @@ public class SkillActive : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         Debug.Log($"Hit: {collision.collider.gameObject.name}");
-        if (collision.gameObject.layer == targetLayer) // Hit target
+        if ((targetLayer & (1 << collision.gameObject.layer)) != 0) // Hit target
         {
             audioData.clip = skill.sndHit;
             audioData.Play();
+            DoDamage(collision.gameObject);
             if (hitCount > 0) { hitCount--; } // Reduce hit count
             else if (hitCount == 0) { Destroy(gameObject); } // Destroy skill if out of hits
-            DoDamage(collision.gameObject);
         }
         else if (!skill.isAOE) // Impact non-target
         {

@@ -18,8 +18,6 @@ public class SkillSO : ScriptableObject
         none        // Will do nothing to the target object
     };
     
-    public bool canUse = true;
-    
     [Header("General")]
     public new string name;
     public Sprite icon;
