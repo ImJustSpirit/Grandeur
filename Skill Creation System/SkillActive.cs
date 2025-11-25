@@ -42,25 +42,19 @@ public class SkillActive : MonoBehaviour
 
     void Update()
     {
-        if (range > 0 && Vector3.Distance(startPosition, transform.position) >= range)
-        {
-            Destroy(gameObject);
-        }
+        if (range > 0 && Vector3.Distance(startPosition, transform.position) >= range) { Destroy(gameObject); }
         if (duration > 0) { duration -= Time.deltaTime; }
         else if (duration <= 0 && duration > -1) { Destroy(gameObject); }
     }
 
-    void OnTriggerEnter(Collider collision) { OnEnter(collision.gameObject); }
+    void OnTriggerEnter(Collider collider) { OnEnter(collider.gameObject); }
     void OnCollisionEnter(Collision collision) { OnEnter(collision.gameObject); }
     
     void OnEnter(GameObject other)
     {
         //Debug.Log($"Hit: {collision.collider.gameObject.name}");
         if ((targetLayer & (1 << other.layer)) != 0) { DoDamage(other); } // Hit Target
-        else if (!skill.isAOE) // Impact non-target
-        {
-            PlayAudio(skill.sndImpact);
-        }
+        else if (!skill.isAOE) { PlayAudio(skill.sndImpact); } // Impact non-target
         if (hitCount > 0) { hitCount--; } // Reduce hit count
         else if (hitCount == 0) { Destroy(gameObject); } // Destroy skill if out of hits
     }

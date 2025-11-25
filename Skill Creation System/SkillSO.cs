@@ -108,7 +108,7 @@ public class SkillSOEditor : Editor
         script.name = EditorGUILayout.TextField("Name", script.name);
         script.icon = (Sprite)EditorGUILayout.ObjectField("Icon", script.icon, typeof(Sprite), false);
         script.cooldown = EditorGUILayout.FloatField("Cooldown", script.cooldown);
-        script.castTime = EditorGUILayout.FloatField("[UNUSED] Cast Time", script.castTime);
+        //script.castTime = EditorGUILayout.FloatField("Cast Time", script.castTime);
         script.cost = EditorGUILayout.IntField("Cost", script.cost);
         script.heldSightline = GUILayout.Toggle(script.heldSightline, "Held Sightline");
         script.damageMethod = (SkillSO.methods)EditorGUILayout.EnumPopup("Damage Method", script.damageMethod);
@@ -120,9 +120,9 @@ public class SkillSOEditor : Editor
         else { script.isMelee = GUILayout.Toggle(script.isMelee, "Melee", EditorStyles.miniButton); }
         if (script.isMelee) {
             EditorGUILayout.BeginVertical("Box");
-            script.melRange = EditorGUILayout.FloatField("[UNUSED] Range", script.melRange);
-            script.melDamage = EditorGUILayout.FloatField("[UNUSED] Damage", script.melDamage);
-            script.melKnockback = EditorGUILayout.FloatField("[UNUSED] Knockback", script.melKnockback);
+            //script.melRange = EditorGUILayout.FloatField("Range", script.melRange);
+            //script.melDamage = EditorGUILayout.FloatField("Damage", script.melDamage);
+            //script.melKnockback = EditorGUILayout.FloatField("Knockback", script.melKnockback);
             EditorGUILayout.EndVertical();
             GUILayout.Space(10);
         }
@@ -131,13 +131,13 @@ public class SkillSOEditor : Editor
         else { script.isRanged = GUILayout.Toggle(script.isRanged, "Ranged", EditorStyles.miniButton); }
         if (script.isRanged) {
             EditorGUILayout.BeginVertical("Box");
-            script.ranInstant = GUILayout.Toggle(script.ranInstant, "[UNUSED] Instant Hit");
+            //script.ranInstant = GUILayout.Toggle(script.ranInstant, "Instant Hit");
             if (!script.ranInstant) { script.ranSpeed = EditorGUILayout.FloatField("Speed", script.ranSpeed); }
             script.ranRange = EditorGUILayout.FloatField("Range", script.ranRange);
             script.ranDamage = EditorGUILayout.FloatField("Damage", script.ranDamage);
-            script.ranKnockback = EditorGUILayout.FloatField("[UNUSED] Knockback", script.ranKnockback);
+            //script.ranKnockback = EditorGUILayout.FloatField("Knockback", script.ranKnockback);
             script.ranPiercingCount = EditorGUILayout.IntField(new GUIContent("[BUGGED] Piercing Count", "Currently pierces through everything."), script.ranPiercingCount);
-            script.ranAttackStyle = (SkillSO.ranAttackTypes)EditorGUILayout.EnumPopup("[UNUSED] Attack Style", script.ranAttackStyle);
+            //script.ranAttackStyle = (SkillSO.ranAttackTypes)EditorGUILayout.EnumPopup("Attack Style", script.ranAttackStyle);
             EditorGUILayout.EndVertical();
             GUILayout.Space(10);
         }
@@ -149,7 +149,7 @@ public class SkillSOEditor : Editor
             script.proSpeed = EditorGUILayout.FloatField("Speed", script.proSpeed);
             script.proVertical = EditorGUILayout.FloatField("Vertical", script.proVertical);
             script.proDamage = EditorGUILayout.FloatField("Damage", script.proDamage);
-            script.proKnockback = EditorGUILayout.FloatField("[UNUSED] Knockback", script.proKnockback);
+            //script.proKnockback = EditorGUILayout.FloatField("Knockback", script.proKnockback);
             script.proBounce = EditorGUILayout.IntField("Bounce Count", script.proBounce);
             script.proMaterial = (PhysicsMaterial)EditorGUILayout.ObjectField("Physics Material", script.proMaterial, typeof(PhysicsMaterial), false);
             EditorGUILayout.EndVertical();
@@ -160,10 +160,10 @@ public class SkillSOEditor : Editor
         else { script.isAOE = GUILayout.Toggle(script.isAOE, "Area of Effect", EditorStyles.miniButton); }
         if (script.isAOE) {
             EditorGUILayout.BeginVertical("Box");
-            script.aoeRadius = EditorGUILayout.FloatField("[UNUSED] Radius", script.aoeRadius);
-            script.aoeDamage = EditorGUILayout.FloatField("[UNUSED] Damage", script.aoeDamage);
-            script.aoeDuration = EditorGUILayout.FloatField("[UNUSED] Duration", script.aoeDuration);
-            script.aoeSpawn = (SkillSO.aoeSpawnTypes)EditorGUILayout.EnumPopup("[UNUSED] Spawn Type", script.aoeSpawn);
+            //script.aoeRadius = EditorGUILayout.FloatField("Radius", script.aoeRadius);
+            //script.aoeDamage = EditorGUILayout.FloatField("Damage", script.aoeDamage);
+            //script.aoeDuration = EditorGUILayout.FloatField("Duration", script.aoeDuration);
+            //script.aoeSpawn = (SkillSO.aoeSpawnTypes)EditorGUILayout.EnumPopup("Spawn Type", script.aoeSpawn);
             if ((script.aoeSpawn == SkillSO.aoeSpawnTypes.OnDeath || script.aoeSpawn == SkillSO.aoeSpawnTypes.OnImpact || script.aoeSpawn == SkillSO.aoeSpawnTypes.OnHit) && !script.isMelee && !script.isRanged && !script.isProjectile) {
                 EditorGUILayout.HelpBox("The selected Spawn Type requires either Melee, Ranged or Projectile to be enable in order for it to be triggered.", MessageType.Error);
             }
@@ -177,48 +177,50 @@ public class SkillSOEditor : Editor
         
         GUILayout.Space(10);
         GUILayout.Label("Visual Settings", EditorStyles.boldLabel);
-        script.visObjectType = (SkillSO.objectTypes)EditorGUILayout.EnumPopup("Object Type", script.visObjectType);
-        switch (script.visObjectType) {
-            case SkillSO.objectTypes.Sphere:
-                EditorGUILayout.BeginVertical("Box");
-                script.visRadius = EditorGUILayout.FloatField("Radius", script.visRadius);
-                script.visMaterial = (Material)EditorGUILayout.ObjectField("Material", script.visMaterial, typeof(Material), false);
-                script.visColor = EditorGUILayout.ColorField("Color", script.visColor);
-                EditorGUILayout.EndVertical();
-                break;
-            case SkillSO.objectTypes.Capsule:
-                EditorGUILayout.BeginVertical("Box");
-                script.visRadius = EditorGUILayout.FloatField("Radius", script.visRadius);
-                script.visHeight = EditorGUILayout.FloatField("Height", script.visHeight);
-                script.visMaterial = (Material)EditorGUILayout.ObjectField("Material", script.visMaterial, typeof(Material), false);
-                script.visColor = EditorGUILayout.ColorField("Color", script.visColor);
-                EditorGUILayout.EndVertical();
-                break;
-            case SkillSO.objectTypes.Custom:
-                EditorGUILayout.BeginVertical("Box");
-                script.visMesh = (Mesh)EditorGUILayout.ObjectField("Mesh", script.visMesh, typeof(Mesh), false);
-                script.visScale = EditorGUILayout.Vector3Field("Scale", script.visScale);
-                script.visRotation = EditorGUILayout.Vector3Field("Rotation", script.visRotation);
-                script.visCollider = (SkillSO.colliderTypes)EditorGUILayout.EnumPopup("Collider Type", script.visCollider);
-                switch (script.visCollider) {
-                    case SkillSO.colliderTypes.Capsule:
-                        script.visColliderCenter = EditorGUILayout.Vector3Field("Collider Center", script.visColliderCenter);
-                        script.visRadius = EditorGUILayout.FloatField("Collider Radius", script.visRadius);
-                        script.visHeight = EditorGUILayout.FloatField("Collider Height", script.visHeight);
-                        break;
-                    case SkillSO.colliderTypes.Box:
-                        script.visColliderCenter = EditorGUILayout.Vector3Field("Collider Center", script.visColliderCenter);
-                        script.visColliderSize = EditorGUILayout.Vector3Field("Collider Size", script.visColliderSize);
-                        break;
-                    case SkillSO.colliderTypes.Sphere:
-                        script.visColliderCenter = EditorGUILayout.Vector3Field("Collider Center", script.visColliderCenter);
-                        script.visColliderRadius = EditorGUILayout.FloatField("Collider Radius", script.visColliderRadius);
-                        break;
-                }
-                script.visMaterial = (Material)EditorGUILayout.ObjectField("Material", script.visMaterial, typeof(Material), false);
-                script.visColor = EditorGUILayout.ColorField("Color", script.visColor);
-                EditorGUILayout.EndVertical();
-                break;
+        if (script.isMelee || script.isRanged || script.isProjectile) {
+            script.visObjectType = (SkillSO.objectTypes)EditorGUILayout.EnumPopup("Object Type", script.visObjectType);
+            switch (script.visObjectType) {
+                case SkillSO.objectTypes.Sphere:
+                    EditorGUILayout.BeginVertical("Box");
+                    script.visRadius = EditorGUILayout.FloatField("Radius", script.visRadius);
+                    script.visMaterial = (Material)EditorGUILayout.ObjectField("Material", script.visMaterial, typeof(Material), false);
+                    script.visColor = EditorGUILayout.ColorField("Color", script.visColor);
+                    EditorGUILayout.EndVertical();
+                    break;
+                case SkillSO.objectTypes.Capsule:
+                    EditorGUILayout.BeginVertical("Box");
+                    script.visRadius = EditorGUILayout.FloatField("Radius", script.visRadius);
+                    script.visHeight = EditorGUILayout.FloatField("Height", script.visHeight);
+                    script.visMaterial = (Material)EditorGUILayout.ObjectField("Material", script.visMaterial, typeof(Material), false);
+                    script.visColor = EditorGUILayout.ColorField("Color", script.visColor);
+                    EditorGUILayout.EndVertical();
+                    break;
+                case SkillSO.objectTypes.Custom:
+                    EditorGUILayout.BeginVertical("Box");
+                    script.visMesh = (Mesh)EditorGUILayout.ObjectField("Mesh", script.visMesh, typeof(Mesh), false);
+                    script.visScale = EditorGUILayout.Vector3Field("Scale", script.visScale);
+                    script.visRotation = EditorGUILayout.Vector3Field("Rotation", script.visRotation);
+                    script.visCollider = (SkillSO.colliderTypes)EditorGUILayout.EnumPopup("Collider Type", script.visCollider);
+                    switch (script.visCollider) {
+                        case SkillSO.colliderTypes.Capsule:
+                            script.visColliderCenter = EditorGUILayout.Vector3Field("Collider Center", script.visColliderCenter);
+                            script.visRadius = EditorGUILayout.FloatField("Collider Radius", script.visRadius);
+                            script.visHeight = EditorGUILayout.FloatField("Collider Height", script.visHeight);
+                            break;
+                        case SkillSO.colliderTypes.Box:
+                            script.visColliderCenter = EditorGUILayout.Vector3Field("Collider Center", script.visColliderCenter);
+                            script.visColliderSize = EditorGUILayout.Vector3Field("Collider Size", script.visColliderSize);
+                            break;
+                        case SkillSO.colliderTypes.Sphere:
+                            script.visColliderCenter = EditorGUILayout.Vector3Field("Collider Center", script.visColliderCenter);
+                            script.visColliderRadius = EditorGUILayout.FloatField("Collider Radius", script.visColliderRadius);
+                            break;
+                    }
+                    script.visMaterial = (Material)EditorGUILayout.ObjectField("Material", script.visMaterial, typeof(Material), false);
+                    script.visColor = EditorGUILayout.ColorField("Color", script.visColor);
+                    EditorGUILayout.EndVertical();
+                    break;
+            }
         }
         script.visParticles = (ParticleSystem)EditorGUILayout.ObjectField("Particles", script.visParticles, typeof(ParticleSystem), false);
         
