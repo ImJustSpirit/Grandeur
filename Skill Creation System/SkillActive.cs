@@ -7,6 +7,7 @@
 //     Damage?
 //     Ran piercing
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,9 +37,7 @@ public class SkillActive : MonoBehaviour
     {
         startPosition = transform.position;
         audioData = gameObject.AddComponent<AudioSource>();
-        audioData.loop = true;
-        audioData.clip = skill.sndRunning;
-        audioData.Play();
+        PlayAudio(skill.sndRunning);
     }
 
     void Update()
@@ -50,22 +49,20 @@ public class SkillActive : MonoBehaviour
         if (duration > 0) { duration -= Time.deltaTime; }
         else if (duration <= 0 && duration > -1) { Destroy(gameObject); }
     }
+
+    void OnTriggerEnter(Collider collision) { OnEnter(collision.gameObject); }
+    void OnCollisionEnter(Collision collision) { OnEnter(collision.gameObject); }
     
-    void OnCollisionEnter(Collision collision)
+    void OnEnter(GameObject other)
     {
         //Debug.Log($"Hit: {collision.collider.gameObject.name}");
-        if ((targetLayer & (1 << collision.gameObject.layer)) != 0) // Hit target
-        {
-            DoDamage(collision.gameObject);
-            if (hitCount > 0) { hitCount--; } // Reduce hit count
-            else if (hitCount == 0) { Destroy(gameObject); } // Destroy skill if out of hits
-        }
+        if ((targetLayer & (1 << other.layer)) != 0) { DoDamage(other); } // Hit Target
         else if (!skill.isAOE) // Impact non-target
         {
-            audioData.clip = skill.sndImpact;
-            audioData.Play();
-            Destroy(gameObject);
+            PlayAudio(skill.sndImpact);
         }
+        if (hitCount > 0) { hitCount--; } // Reduce hit count
+        else if (hitCount == 0) { Destroy(gameObject); } // Destroy skill if out of hits
     }
 
     void OnCollisionStay(Collision collision)
@@ -85,10 +82,17 @@ public class SkillActive : MonoBehaviour
         }
     }
 
+    void PlayAudio(AudioClip clip)
+    {
+        if (clip == skill.sndRunning) { audioData.loop = true; }
+        else { audioData.loop = false; }
+        audioData.clip = clip;
+        audioData.Play();
+    }
+    
     void DoDamage(GameObject target)
     {
-        audioData.clip = skill.sndHit;
-        audioData.Play();
+        PlayAudio(skill.sndHit);
         switch (damageMethod) {
             case SkillSO.methods.destroy:
                 Destroy(target);

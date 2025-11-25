@@ -53,9 +53,11 @@ public class SkillSO : ScriptableObject
     [Header("Projectile")]
     public bool isProjectile;
     public float proSpeed;
+    public float proVertical;
     public float proDamage;
     public float proKnockback;
     public int proBounce;
+    public PhysicsMaterial proMaterial;
 
     [Header("Area of Effect")]
     public bool isAOE;
@@ -132,9 +134,9 @@ public class SkillSOEditor : Editor
             script.ranInstant = GUILayout.Toggle(script.ranInstant, "[UNUSED] Instant Hit");
             if (!script.ranInstant) { script.ranSpeed = EditorGUILayout.FloatField("Speed", script.ranSpeed); }
             script.ranRange = EditorGUILayout.FloatField("Range", script.ranRange);
-            script.ranDamage = EditorGUILayout.FloatField("[UNUSED] Damage", script.ranDamage);
+            script.ranDamage = EditorGUILayout.FloatField("Damage", script.ranDamage);
             script.ranKnockback = EditorGUILayout.FloatField("[UNUSED] Knockback", script.ranKnockback);
-            script.ranPiercingCount = EditorGUILayout.IntField("[UNUSED] Piercing Count", script.ranPiercingCount);
+            script.ranPiercingCount = EditorGUILayout.IntField(new GUIContent("[BUGGED] Piercing Count", "Currently pierces through everything."), script.ranPiercingCount);
             script.ranAttackStyle = (SkillSO.ranAttackTypes)EditorGUILayout.EnumPopup("[UNUSED] Attack Style", script.ranAttackStyle);
             EditorGUILayout.EndVertical();
             GUILayout.Space(10);
@@ -144,10 +146,12 @@ public class SkillSOEditor : Editor
         else { script.isProjectile = GUILayout.Toggle(script.isProjectile, "Projectile", EditorStyles.miniButton); }
         if (script.isProjectile) {
             EditorGUILayout.BeginVertical("Box");
-            script.proSpeed = EditorGUILayout.FloatField("[UNUSED] Speed", script.proSpeed);
-            script.proDamage = EditorGUILayout.FloatField("[UNUSED] Damage", script.proDamage);
+            script.proSpeed = EditorGUILayout.FloatField("Speed", script.proSpeed);
+            script.proVertical = EditorGUILayout.FloatField("Vertical", script.proVertical);
+            script.proDamage = EditorGUILayout.FloatField("Damage", script.proDamage);
             script.proKnockback = EditorGUILayout.FloatField("[UNUSED] Knockback", script.proKnockback);
-            script.proBounce = EditorGUILayout.IntField("[UNUSED] Bounce Count", script.proBounce);
+            script.proBounce = EditorGUILayout.IntField("Bounce Count", script.proBounce);
+            script.proMaterial = (PhysicsMaterial)EditorGUILayout.ObjectField("Physics Material", script.proMaterial, typeof(PhysicsMaterial), false);
             EditorGUILayout.EndVertical();
             GUILayout.Space(10);
         }

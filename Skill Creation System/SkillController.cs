@@ -39,17 +39,17 @@ public class SkillController : MonoBehaviour
     
     private IEnumerator Cooldown(SkillSO skill)
     {
-        Debug.Log("Cooldown started");
+        //Debug.Log("Cooldown started");
         yield return new WaitForSeconds(skill.cooldown);
         canUse = true;
-        Debug.Log("Cooldown finished");
+        //Debug.Log("Cooldown finished");
     }
     
     private IEnumerator CastTime(SkillSO skill)
     {
-        Debug.Log("Casting started");
+        //Debug.Log("Casting started");
         yield return new WaitForSeconds(skill.castTime);
-        Debug.Log("Casting finished");
+        //Debug.Log("Casting finished");
     }
     
     void Start() { origin = skillOrigin; }
@@ -61,7 +61,7 @@ public class SkillController : MonoBehaviour
         //     Change ray from camera to player
         
         ray = new Ray(origin.transform.position, origin.transform.forward);
-        Debug.DrawRay(ray.origin, ray.direction * skill.ranRange, Color.red);
+        //Debug.DrawRay(ray.origin, ray.direction * skill.ranRange, Color.red);
         
         if (skill.isRanged) { // Ranged Sightline
             // TODO: Ranged Sightline
@@ -130,7 +130,7 @@ public class SkillController : MonoBehaviour
     
     public void UseSkill(SkillSO skill)
     {
-        Debug.Log("Skill Used");
+        //Debug.Log("Skill Used");
         
         Destroy(sightlineRAN);
         Destroy(sightlinePRO);
@@ -159,11 +159,13 @@ public class SkillController : MonoBehaviour
         switch (skill.visObjectType) {
             case SkillSO.objectTypes.Capsule:
                 obj = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                refCapsuleCollider = obj.GetComponent<CapsuleCollider>();
                 obj.transform.localScale = new Vector3(skill.visRadius, skill.visHeight, skill.visRadius);
                 obj.transform.position = origin.transform.position;
                 break;
             case SkillSO.objectTypes.Sphere:
                 obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                refSphereCollider = obj.GetComponent<SphereCollider>();
                 obj.transform.localScale = Vector3.one * skill.visRadius;
                 obj.transform.position = origin.transform.position;
                 break;
@@ -238,16 +240,21 @@ public class SkillController : MonoBehaviour
     {
         // TODO: Ranged Effects
         //     Ran Instant
+        //     Knockback
+        //     Make it only pierce through certain things
         //     Line
         
         //Debug.Log("Ranged Effects");
         if (!skill.ranInstant) {
             //Fires ray
             ray = new Ray(origin.transform.position, origin.transform.forward);
-            Debug.DrawRay(ray.origin, ray.direction * skill.ranRange, Color.red);
+            //Debug.DrawRay(ray.origin, ray.direction * skill.ranRange, Color.red);
             Physics.Raycast(ray, out hitInfo, Mathf.Infinity, ~2048);
             
             GameObject ranged = ObjectSetup(skill);
+            
+            // Collider
+            refCollider.isTrigger = true;
             
             // Rigidbody
             refRigidbody.useGravity = false;
@@ -272,7 +279,7 @@ public class SkillController : MonoBehaviour
             if (skill.ranAttackStyle == SkillSO.ranAttackTypes.Line) {
                 // TODO: Ranged Effects
                 //     Make it possible to spawn stuff at points on the line
-                //    Get all enemies in the line
+                //     Get all enemies in the line
             }
         }
     }
@@ -280,24 +287,20 @@ public class SkillController : MonoBehaviour
     void ProjectileEffects(SkillSO skill)
     {
         // TODO: Projectile Effects
-        //     Make the projectile launch upwards with more oomph
+        //     Knockback
         
-        //Debug.Log("Projectile Effects");
+        Debug.Log("Projectile Effects");
         GameObject projectile = ObjectSetup(skill);
         
         // Skill Script
+        refSkillActive.skill = skill;
         refSkillActive.damage = skill.proDamage;
         refSkillActive.hitCount = skill.proBounce;
+        refCollider.material = skill.proMaterial;
         
-        //Fires a ray from the camera
-        ray = Camera.main.ViewportPointToRay(new Vector3 (0.5f, 0.5f, 0));
-        Physics.Raycast(ray, out hitInfo, Mathf.Infinity, ~2048);
-            
-        // Point towards the hit point
-        projectile.transform.position = transform.position;
-        projectile.transform.LookAt(hitInfo.point);
-        projectile.transform.rotation = Quaternion.Euler(projectile.transform.rotation.eulerAngles);
-        refRigidbody.linearVelocity = (hitInfo.point - projectile.transform.position).normalized * skill.ranSpeed;
+        projectile.transform.rotation = Quaternion.Euler(skillOrigin.transform.rotation.eulerAngles);
+        refRigidbody.linearVelocity = origin.transform.forward * skill.proSpeed;
+        refRigidbody.linearVelocity += Vector3.up * skill.proVertical;
     }
     
     void AOEEffects(SkillSO skill)
@@ -306,20 +309,23 @@ public class SkillController : MonoBehaviour
         //     Spawn on enemy death
         //     Spawn on enemy hit
         //     Spawn on impact
-        //     Keeps projectile alive if enabled
         
         //Debug.Log("AOE Effects");
-        GameObject aoe = ObjectSetup(skill);
-        aoe.transform.localScale = new Vector3(skill.visRadius, skill.visHeight, skill.visRadius);
+        if (skill.aoeSpawn == SkillSO.aoeSpawnTypes.Instant) {
+            GameObject aoe = ObjectSetup(skill);
+            aoe.transform.localScale = new Vector3(skill.visRadius, skill.visHeight, skill.visRadius);
         
-        // Rigidbody
-        refRigidbody.useGravity = false;
-        refRigidbody.constraints = RigidbodyConstraints.FreezeAll;
+            // Rigidbody
+            refRigidbody.useGravity = false;
+            refRigidbody.constraints = RigidbodyConstraints.FreezeAll;
 
-        aoe.transform.position = transform.position - new Vector3(0, 1f, 0);
+            aoe.transform.position = transform.position - new Vector3(0, 1f, 0);
+            
+            // Skill Script
+            refSkillActive.skill = skill;
+        }
         
         // Skill Script
-        refSkillActive.skill = skill;
         refSkillActive.damage = skill.aoeDamage;
         refSkillActive.duration = skill.aoeDuration;
     }
