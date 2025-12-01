@@ -157,6 +157,16 @@ public class SkillController : MonoBehaviour
 
         GameObject obj = null;
         switch (skill.visObjectType) {
+            case SkillSO.objectTypes.None:
+                switch (skill.aoeObjectType) {
+                    case SkillSO.aoeObjectTypes.Cylinder:
+                        obj = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                        //refCapsuleCollider = obj.GetComponent<>();
+                        break;
+                    case SkillSO.aoeObjectTypes.Sphere:
+                        break;
+                }
+                break;
             case SkillSO.objectTypes.Capsule:
                 obj = GameObject.CreatePrimitive(PrimitiveType.Capsule);
                 refCapsuleCollider = obj.GetComponent<CapsuleCollider>();
@@ -326,7 +336,7 @@ public class SkillController : MonoBehaviour
         }
         
         // Skill Script
-        refSkillActive.damage = skill.aoeDamage;
+        refSkillActive.dot = skill.aoeDamage;
         refSkillActive.duration = skill.aoeDuration;
     }
 }

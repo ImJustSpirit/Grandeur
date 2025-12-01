@@ -1,0 +1,15 @@
+{
+  "name": "JustSpirit.SCS.Runtime",
+  "references": [
+    "JustSpirit.SCS.Editor"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

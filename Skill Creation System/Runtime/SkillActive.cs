@@ -1,13 +1,8 @@
 // TODO: Overall
-//     Stop skill from colliding when it should be piercing
 //     Test SFX
 //     Knockback enemies
 //     Fix the code so AOE hits more than one at once
-//     Destroy after range is reached
-//     Damage?
-//     Ran piercing
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,21 +11,22 @@ public class SkillActive : MonoBehaviour
 {
     public SkillSO skill;
     public float damage;
+    public float dot;           // aoeDamage                   | AOE damage per second
     public float range = -1;    // ranRange,                   | Anything above 0 has a range, -1 is infinite
     public int hitCount = -1;   // ranPiercingCount, proBounce | Anything above 0 has limited hits, -1 is infinite
     public float duration = -1; // aoeDuration                 | Anything above 0 is timed, -1 is infinite
     public LayerMask targetLayer;
     public SkillSO.methods damageMethod;
     private AudioSource audioData;
-    private List<Collision> dotCooldown = new List<Collision>();
+    private List<Collider> dotCooldown = new List<Collider>();
     private Vector3 startPosition;
     
-    private IEnumerator dotTimer(Collision collision)
+    private IEnumerator dotTimer(Collider collider)
     {
-        //Debug.Log($"Hit: {collision.collider.gameObject.name}");
-        DoDamage(collision.gameObject);
+        //Debug.Log($"Hit: {collider.gameObject.name}");
+        DoDamage(collider.gameObject);
         yield return new WaitForSeconds(1);
-        dotCooldown.Remove(collision);
+        dotCooldown.Remove(collider);
     }
 
     private void Start()
@@ -59,19 +55,16 @@ public class SkillActive : MonoBehaviour
         else if (hitCount == 0) { Destroy(gameObject); } // Destroy skill if out of hits
     }
 
-    void OnCollisionStay(Collision collision)
+    void OnTriggerStay(Collider other)
     {
-        if (duration > 0)
-        {
-            if (dotCooldown.Find(x => x == collision) != collision)
-            { 
-                StartCoroutine(dotTimer(collision));
-                dotCooldown.Add(collision);
+        if (duration > 0) {
+            if (dotCooldown.Find(x => x == other) != other) { 
+                StartCoroutine(dotTimer(other));
+                dotCooldown.Add(other);
             }
-            foreach (var x in dotCooldown)
-            {
+            foreach (var x in dotCooldown) {
                 //Debug.Log($"Found: {x.gameObject.name}");
-                DoDamage(collision.gameObject);
+                DoDamage(other.gameObject);
             }
         }
     }

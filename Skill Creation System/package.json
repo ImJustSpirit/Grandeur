@@ -1,0 +1,16 @@
+{
+  "name": "dev.justspirit.scs",
+  "version": "0.2.1",
+  "displayName": "Skill Creation System",
+  "description": "The Skill Creation System from the Granduer tool set made by JustSpirit.",
+  "unity": "6000.0",
+  "documentationUrl": "https://example.com/",
+  "changelogUrl": "https://github.com/ImJustSpirit/Grandeur/compare/v0.2.0...v0.2.1",
+  "license": "GPL-3.0-only",
+  "licensesUrl": "https://github.com/ImJustSpirit/Grandeur/blob/main/LICENSE",
+  "author": {
+    "name": "Jack Petty (JustSpirit)",
+    "email": "jackcpetty64@gmail.com",
+    "url": "https://www.justspirit.dev"
+  }
+}

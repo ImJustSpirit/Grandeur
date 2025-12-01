@@ -1,6 +1,4 @@
-using System.Security.Cryptography;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "BlankSkill", menuName = "Grandeur/New Skill")]
@@ -8,6 +6,7 @@ public class SkillSO : ScriptableObject
 {
     public enum ranAttackTypes {Point, Line};
     public enum aoeSpawnTypes {Instant, OnDeath, OnImpact, OnHit};
+    public enum aoeObjectTypes {Cylinder, Sphere};
     public enum objectTypes {None, Sphere, Capsule, Custom};
     public enum colliderTypes {Capsule, Box, Sphere, Mesh};
     public enum methods
@@ -65,6 +64,7 @@ public class SkillSO : ScriptableObject
     public float aoeDamage;
     public float aoeDuration;
     public aoeSpawnTypes aoeSpawn;
+    public aoeObjectTypes aoeObjectType;
     
     [Header("Visuals")]
     public objectTypes visObjectType;
@@ -160,10 +160,11 @@ public class SkillSOEditor : Editor
         else { script.isAOE = GUILayout.Toggle(script.isAOE, "Area of Effect", EditorStyles.miniButton); }
         if (script.isAOE) {
             EditorGUILayout.BeginVertical("Box");
-            //script.aoeRadius = EditorGUILayout.FloatField("Radius", script.aoeRadius);
-            //script.aoeDamage = EditorGUILayout.FloatField("Damage", script.aoeDamage);
-            //script.aoeDuration = EditorGUILayout.FloatField("Duration", script.aoeDuration);
-            //script.aoeSpawn = (SkillSO.aoeSpawnTypes)EditorGUILayout.EnumPopup("Spawn Type", script.aoeSpawn);
+            script.aoeRadius = EditorGUILayout.FloatField("Radius", script.aoeRadius);
+            script.aoeDamage = EditorGUILayout.FloatField("Damage", script.aoeDamage);
+            script.aoeDuration = EditorGUILayout.FloatField("Duration", script.aoeDuration);
+            script.aoeSpawn = (SkillSO.aoeSpawnTypes)EditorGUILayout.EnumPopup("Spawn Type", script.aoeSpawn);
+            script.aoeObjectType = (SkillSO.aoeObjectTypes)EditorGUILayout.EnumPopup("Object Type", script.aoeObjectType);
             if ((script.aoeSpawn == SkillSO.aoeSpawnTypes.OnDeath || script.aoeSpawn == SkillSO.aoeSpawnTypes.OnImpact || script.aoeSpawn == SkillSO.aoeSpawnTypes.OnHit) && !script.isMelee && !script.isRanged && !script.isProjectile) {
                 EditorGUILayout.HelpBox("The selected Spawn Type requires either Melee, Ranged or Projectile to be enable in order for it to be triggered.", MessageType.Error);
             }
