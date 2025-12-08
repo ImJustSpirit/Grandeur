@@ -1,5 +1,3 @@
-# Grandeur
-A number of interconnected, scaleable systems for RPG-esc games.
 ## Skill Creation System (v0.2.1)
 The _Skill Creation System_ is a highly modular creation system intended to be all encompassing and able to let a designer create any "skill", "spell" or "ability" with minimal setup.
 ### Currently Status:

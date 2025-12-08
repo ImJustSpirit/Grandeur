@@ -8,3 +8,5 @@ The _Skill Creation System_ is a highly modular creation system intended to be a
 - **(95%)** Projectile
 - **(00%)** AOE
 - **(90%)** Other
+## Stat System (v1.0.0)
+The _Stat System_ is the backbone for everything stat related the Grandeur tools could need.

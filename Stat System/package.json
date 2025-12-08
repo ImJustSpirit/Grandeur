@@ -1,11 +1,11 @@
 {
-  "name": "dev.justspirit.scs",
-  "version": "0.2.1",
-  "displayName": "Skill Creation System",
-  "description": "The Skill Creation System from the Granduer tool set made by JustSpirit.",
+  "name": "dev.justspirit.stat",
+  "version": "1.0.0",
+  "displayName": "Stat System",
+  "description": "The Stat System from the Granduer tool set made by JustSpirit.",
   "unity": "6000.0",
   "documentationUrl": "https://github.com/ImJustSpirit/Grandeur/wiki",
-  "changelogUrl": "https://github.com/ImJustSpirit/Grandeur/compare/SCS_v0.2.0...SCS_v0.2.1",
+  "changelogUrl": "https://github.com/ImJustSpirit/Grandeur/releases/tag/STAT_v0.1.0",
   "license": "GPL-3.0-only",
   "licensesUrl": "https://github.com/ImJustSpirit/Grandeur/blob/main/LICENSE",
   "author": {
