@@ -74,7 +74,7 @@ public class SkillActive : MonoBehaviour
         if (clip == skill.sndRunning) { audioData.loop = true; }
         else { audioData.loop = false; }
         audioData.clip = clip;
-        audioData.Play();
+        if (clip != null) { audioData.Play(); }
     }
     
     void DoDamage(GameObject target)

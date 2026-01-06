@@ -307,7 +307,8 @@ public class SkillController : MonoBehaviour
         refSkillActive.damage = skill.proDamage;
         refSkillActive.hitCount = skill.proBounce;
         refCollider.material = skill.proMaterial;
-        
+        refRigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            
         projectile.transform.rotation = Quaternion.Euler(skillOrigin.transform.rotation.eulerAngles);
         refRigidbody.linearVelocity = origin.transform.forward * skill.proSpeed;
         refRigidbody.linearVelocity += Vector3.up * skill.proVertical;
